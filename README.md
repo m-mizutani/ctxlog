@@ -1,6 +1,11 @@
 # ctxlog
 
 [![GoDoc](https://godoc.org/github.com/m-mizutani/ctxlog?status.svg)](https://godoc.org/github.com/m-mizutani/ctxlog)
+[![Test](https://github.com/m-mizutani/ctxlog/actions/workflows/test.yml/badge.svg)](https://github.com/m-mizutani/ctxlog/actions/workflows/test.yml)
+[![Lint](https://github.com/m-mizutani/ctxlog/actions/workflows/lint.yml/badge.svg)](https://github.com/m-mizutani/ctxlog/actions/workflows/lint.yml)
+[![Security](https://github.com/m-mizutani/ctxlog/actions/workflows/security.yml/badge.svg)](https://github.com/m-mizutani/ctxlog/actions/workflows/security.yml)
+[![codecov](https://codecov.io/gh/m-mizutani/ctxlog/branch/main/graph/badge.svg)](https://codecov.io/gh/m-mizutani/ctxlog)
+[![Go Report Card](https://goreportcard.com/badge/github.com/m-mizutani/ctxlog)](https://goreportcard.com/report/github.com/m-mizutani/ctxlog)
 
 A Go library for embedding and extracting `*slog.Logger` instances in `context.Context` with conditional activation and hierarchical scoping.
 
