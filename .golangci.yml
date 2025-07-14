@@ -41,7 +41,7 @@ linters:
     - gofumpt
     - goheader
     - goimports
-    - gomnd
+    - mnd
     - gomoddirectives
     - gomodguard
     - goprintffuncname
@@ -121,7 +121,7 @@ linters-settings:
   goimports:
     local-prefixes: github.com/m-mizutani/ctxlog
   
-  gomnd:
+  mnd:
     checks:
       - argument
       - case
@@ -173,7 +173,7 @@ issues:
         - gochecknoglobals
         - gochecknoinits
         - forbidigo
-        - gomnd
+        - mnd
         - gocritic
     
     # Allow blank imports in main packages
