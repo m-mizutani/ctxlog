@@ -55,20 +55,17 @@ func main() {
 	// Example 3: Mixed activation conditions
 	println("\n=== Example 3: Mixed Activation Conditions ===")
 	mixedScope := ctxlog.NewScope("mixed",
-		ctxlog.EnabledBy("DEBUG_MIXED"),
-		ctxlog.EnabledMinLevel(slog.LevelWarn))
+		ctxlog.EnabledBy("DEBUG_MIXED", "VERBOSE_MIXED"))
 
 	childMixedScope := mixedScope.NewChild("child",
 		ctxlog.EnabledBy("DEBUG_CHILD"))
 
-	// Set log level
-	ctx = ctxlog.WithLogLevel(ctx, slog.LevelError)
-
 	_ = os.Unsetenv("DEBUG_MIXED")
 	_ = os.Unsetenv("DEBUG_CHILD")
+	_ = os.Setenv("VERBOSE_MIXED", "1")
 
 	mixedLogger := ctxlog.From(ctx, mixedScope)
-	mixedLogger.Info("Mixed scope message") // Active (Error >= Warn)
+	mixedLogger.Info("Mixed scope message") // Active (VERBOSE_MIXED is set)
 
 	childLogger := ctxlog.From(ctx, childMixedScope)
 	childLogger.Info("Child mixed scope message") // Active (parent is active)
@@ -76,7 +73,6 @@ func main() {
 	// Example 4: Dynamic activation with hierarchy
 	println("\n=== Example 4: Dynamic Activation with Hierarchy ===")
 	_ = os.Unsetenv("DEBUG_USER")
-	ctx = ctxlog.WithLogLevel(ctx, slog.LevelDebug)
 
 	// Enable middle-level scope
 	ctx = ctxlog.EnableScope(ctx, apiScope)

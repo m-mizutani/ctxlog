@@ -11,11 +11,7 @@ import (
 
 type ctxLoggerKey struct{}
 
-type ctxLogLevelKey struct{}
-
 var loggerKey = ctxLoggerKey{} //nolint:gochecknoglobals // Required for context key
-
-var logLevelKey = ctxLogLevelKey{} //nolint:gochecknoglobals // Required for context key
 
 // From extracts a logger from the context with optional configuration.
 // If no logger is found, returns slog.Default().
@@ -65,11 +61,6 @@ func From(ctx context.Context, options ...Option) *slog.Logger {
 // With embeds a logger into the context and returns a new context.
 func With(ctx context.Context, logger *slog.Logger) context.Context {
 	return context.WithValue(ctx, loggerKey, logger)
-}
-
-// WithLogLevel embeds a log level into the context and returns a new context.
-func WithLogLevel(ctx context.Context, level slog.Level) context.Context {
-	return context.WithValue(ctx, logLevelKey, level)
 }
 
 // randPool provides buffered cryptographically secure random numbers.
