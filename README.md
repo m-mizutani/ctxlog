@@ -25,7 +25,7 @@ Large Go applications face two critical logging challenges:
 
 ### Core Functionality
 - **Context-based logger propagation**: Embed and extract loggers from context
-- **Conditional activation**: Enable/disable logging based on environment variables or log levels
+- **Conditional activation**: Enable/disable logging based on environment variables
 - **Hierarchical scoping**: Create parent-child scope relationships with inheritance
 
 ### Advanced Control
@@ -67,29 +67,14 @@ logger := ctxlog.From(ctx, scope)
 logger.Info("API call started") // Only logged if DEBUG_API exists
 ```
 
-### Log Level Activation
+### Multiple Environment Variables
 
 ```go
-// Create scope activated when log level >= Warn
-scope := ctxlog.NewScope("errors", ctxlog.EnabledMinLevel(slog.LevelWarn))
-
-// Set current log level in context
-ctx = ctxlog.WithLogLevel(ctx, slog.LevelError)
-
-// Logger is active because Error >= Warn
-logger := ctxlog.From(ctx, scope)
-logger.Info("This will be logged")
-```
-
-### Multiple Activation Conditions
-
-```go
-// Scope is active if ANY condition is met
+// Scope is active if ANY environment variable is set
 scope := ctxlog.NewScope("debug",
-    ctxlog.EnabledBy("DEBUG_MODE", "VERBOSE"),  // Environment variables
-    ctxlog.EnabledMinLevel(slog.LevelWarn))     // Log level threshold
+    ctxlog.EnabledBy("DEBUG_MODE", "VERBOSE", "DEV_ENV"))
 
-// Active if DEBUG_MODE OR VERBOSE is set OR log level >= Warn
+// Active if DEBUG_MODE OR VERBOSE OR DEV_ENV is set
 logger := ctxlog.From(ctx, scope)
 ```
 
@@ -171,7 +156,6 @@ Scopes use OR logic for activation conditions. A scope is active if ANY of these
 1. **Dynamic enablement**: `EnableScope(ctx, scope)` or `EnableScopeGlobal(scope)`
 2. **Parent activation**: Parent scope is active (for child scopes)
 3. **Environment variables**: Any specified environment variable exists (via `EnabledBy`)
-4. **Log level**: Current log level >= specified minimum level (via `EnabledMinLevel`)
 
 ### Environment Variable Behavior
 
@@ -179,12 +163,6 @@ Scopes use OR logic for activation conditions. A scope is active if ANY of these
 - Variable existence matters, not value (`export DEBUG=""` still activates)
 - Uses `os.LookupEnv()` for checking
 
-### Log Level Behavior
-
-- Compares current context log level with scope minimum level
-- Current level set via `ctxlog.WithLogLevel(ctx, level)`
-- Does not affect which log methods you can call
-- Only controls scope activation
 
 ## Performance Considerations
 
