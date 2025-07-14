@@ -219,10 +219,6 @@ func NewScope(name string, options ...ScopeOption) *Scope {
 	return scope
 }
 
-// NewScopeWithEnvVars creates a new scope with environment variables (backward compatibility)
-func NewScopeWithEnvVars(name string, envVars ...string) *Scope {
-	return NewScope(name, EnabledBy(envVars...))
-}
 
 // NewChild creates a child scope with hierarchical naming
 func (s *Scope) NewChild(name string, options ...ScopeOption) *Scope {
@@ -237,10 +233,6 @@ func (s *Scope) NewChild(name string, options ...ScopeOption) *Scope {
 	return child
 }
 
-// NewChildWithEnvVars creates a child scope with environment variables (backward compatibility)
-func (s *Scope) NewChildWithEnvVars(name string, envVars ...string) *Scope {
-	return s.NewChild(name, EnabledBy(envVars...))
-}
 
 // isActive checks if the scope is active based on context, environment variables, log level or dynamic enablement.
 //
