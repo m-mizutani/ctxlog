@@ -1,7 +1,6 @@
 package ctxlog_test
 
 import (
-	"context"
 	"log/slog"
 	"testing"
 
@@ -9,7 +8,7 @@ import (
 )
 
 func TestSampling(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Test sampling with rate 0 (should always discard)
 	logger := ctxlog.From(ctx, ctxlog.WithSampling(0.0))
@@ -25,7 +24,7 @@ func TestSampling(t *testing.T) {
 }
 
 func TestConditionalLogging(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Test condition false
 	logger := ctxlog.From(ctx, ctxlog.WithCond(func() bool { return false }))

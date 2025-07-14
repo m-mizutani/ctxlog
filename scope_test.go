@@ -1,7 +1,6 @@
 package ctxlog_test
 
 import (
-	"context"
 	"log/slog"
 	"testing"
 
@@ -30,7 +29,7 @@ func TestScope(t *testing.T) {
 
 func TestScopeActivation(t *testing.T) {
 	scope := ctxlog.NewScope("test-activation", ctxlog.EnabledBy("TEST_ACTIVATION"))
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Test inactive scope
 	logger := ctxlog.From(ctx, scope)
@@ -49,7 +48,7 @@ func TestScopeActivation(t *testing.T) {
 
 func TestScopeEnvironmentActivation(t *testing.T) {
 	scope := ctxlog.NewScope("test-env", ctxlog.EnabledBy("TEST_ENV_ACTIVATION"))
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Set environment variable
 	t.Setenv("TEST_ENV_ACTIVATION", "1")
@@ -62,7 +61,7 @@ func TestScopeEnvironmentActivation(t *testing.T) {
 
 func TestScopeEnvironmentActivationWithEmptyValue(t *testing.T) {
 	scope := ctxlog.NewScope("test-env-empty", ctxlog.EnabledBy("TEST_ENV_EMPTY"))
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Set environment variable to empty string
 	t.Setenv("TEST_ENV_EMPTY", "")
@@ -80,7 +79,7 @@ func TestChildScopeActivation(t *testing.T) {
 	grandChildScope := childScope.NewChild("grandchild", ctxlog.EnabledBy("GRANDCHILD_ENV"))
 	greatGrandChildScope := grandChildScope.NewChild("greatgrandchild", ctxlog.EnabledBy("GREATGRANDCHILD_ENV"))
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Test that all levels are inactive when parent is inactive
 	logger := ctxlog.From(ctx, childScope)
@@ -122,7 +121,7 @@ func TestChildScopeEnvironmentActivation(t *testing.T) {
 	parentScope := ctxlog.NewScope("env-parent", ctxlog.EnabledBy("ENV_PARENT"))
 	childScope := parentScope.NewChild("env-child", ctxlog.EnabledBy("ENV_CHILD"))
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Test child activation through environment variable
 	t.Setenv("ENV_CHILD", "1")
@@ -144,7 +143,7 @@ func TestChildScopeParentEnvironmentActivation(t *testing.T) {
 	parentScope := ctxlog.NewScope("env-parent2", ctxlog.EnabledBy("ENV_PARENT2"))
 	childScope := parentScope.NewChild("env-child2", ctxlog.EnabledBy("ENV_CHILD2"))
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Test child activation through parent environment variable
 	t.Setenv("ENV_PARENT2", "1")
@@ -167,7 +166,7 @@ func TestChildScopeIndependentActivation(t *testing.T) {
 	parentScope := ctxlog.NewScope("independent-parent", ctxlog.EnabledBy("INDEPENDENT_PARENT"))
 	childScope := parentScope.NewChild("independent-child", ctxlog.EnabledBy("INDEPENDENT_CHILD"))
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Activate only child scope directly
 	ctx = ctxlog.EnableScope(ctx, childScope)
@@ -193,7 +192,7 @@ func TestDeepHierarchyActivation(t *testing.T) {
 	level4 := level3.NewChild("level4", ctxlog.EnabledBy("LEVEL4"))
 	level5 := level4.NewChild("level5", ctxlog.EnabledBy("LEVEL5"))
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Test activation from middle level (level3)
 	ctx = ctxlog.EnableScope(ctx, level3)
@@ -227,7 +226,7 @@ func TestDeepHierarchyActivation(t *testing.T) {
 	}
 
 	// Test activation from top level
-	ctx = ctxlog.EnableScope(context.Background(), level1)
+	ctx = ctxlog.EnableScope(t.Context(), level1)
 
 	// All levels should be active
 	for i, scope := range []*ctxlog.Scope{level1, level2, level3, level4, level5} {
@@ -241,7 +240,7 @@ func TestDeepHierarchyActivation(t *testing.T) {
 func TestGlobalScopeOperations(t *testing.T) {
 	scope1 := ctxlog.NewScope("global-test-1", ctxlog.EnabledBy("GLOBAL_TEST_1"))
 	scope2 := ctxlog.NewScope("global-test-2", ctxlog.EnabledBy("GLOBAL_TEST_2"))
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Initially inactive
 	logger := ctxlog.From(ctx, scope1)
@@ -289,7 +288,7 @@ func TestGlobalScopeOperations(t *testing.T) {
 func TestScopeLogLevelActivation(t *testing.T) {
 	// Test scope activation based on log level
 	scope := ctxlog.NewScope("test-level", ctxlog.EnabledMinLevel(slog.LevelWarn))
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Test with log level below threshold
 	ctx = ctxlog.WithLogLevel(ctx, slog.LevelInfo)
@@ -318,7 +317,7 @@ func TestScopeMultipleConditions(t *testing.T) {
 	scope := ctxlog.NewScope("test-multi-cond",
 		ctxlog.EnabledBy("TEST_MULTI_COND"),
 		ctxlog.EnabledMinLevel(slog.LevelWarn))
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Test with environment variable but low log level
 	t.Setenv("TEST_MULTI_COND", "1")

@@ -7,13 +7,13 @@ import (
 	"sync"
 )
 
-// Capture holds captured log records for testing
+// Capture holds captured log records for testing.
 type Capture struct {
 	records []slog.Record
 	mu      sync.RWMutex
 }
 
-// captureHandler implements slog.Handler to capture log records
+// captureHandler implements slog.Handler to capture log records.
 type captureHandler struct {
 	capture *Capture
 	base    slog.Handler
@@ -23,10 +23,15 @@ func (h *captureHandler) Enabled(ctx context.Context, level slog.Level) bool {
 	return h.base.Enabled(ctx, level)
 }
 
+//nolint:gocritic // slog.Record must be passed by value per slog.Handler interface
 func (h *captureHandler) Handle(ctx context.Context, record slog.Record) error {
+	// Make a copy to avoid issues with record reuse
+	recordCopy := record.Clone()
+
 	h.capture.mu.Lock()
-	h.capture.records = append(h.capture.records, record)
+	h.capture.records = append(h.capture.records, recordCopy)
 	h.capture.mu.Unlock()
+
 	return h.base.Handle(ctx, record)
 }
 
@@ -44,7 +49,7 @@ func (h *captureHandler) WithGroup(name string) slog.Handler {
 	}
 }
 
-// NewCapture creates a new context with log capture capability
+// NewCapture creates a new context with log capture capability.
 func NewCapture(ctx context.Context) (context.Context, *Capture) {
 	capture := &Capture{}
 
@@ -55,22 +60,24 @@ func NewCapture(ctx context.Context) (context.Context, *Capture) {
 	}
 
 	logger := slog.New(handler)
+
 	return With(ctx, logger), capture
 }
 
-// Messages returns all captured log messages
+// Messages returns all captured log messages.
 func (c *Capture) Messages() []string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
 	messages := make([]string, len(c.records))
-	for i, record := range c.records {
-		messages[i] = record.Message
+	for i := range c.records {
+		messages[i] = c.records[i].Message
 	}
+
 	return messages
 }
 
-// Records returns all captured log records
+// Records returns all captured log records.
 func (c *Capture) Records() []slog.Record {
 	c.mu.RLock()
 	defer c.mu.RUnlock()

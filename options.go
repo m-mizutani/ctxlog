@@ -2,7 +2,7 @@ package ctxlog
 
 // Option represents configuration options for logger creation
 type Option interface {
-	apply(*config)
+	apply(cfg *config)
 }
 
 // config holds configuration for logger creation

@@ -72,6 +72,8 @@ go mod tidy
   - Use `export_test.go` for items that need to be exposed for testing purposes
 - When making changes, before finishing the task, always:
   - Run `go vet ./...`, `go fmt ./...` to format the code
+  - Run `golangci-lint run ./...` to check lint error
+  - Run `gosec -quiet ./...` to check security issue
   - Run tests to ensure no impact on other code
 - All comment and charactor literal in source code must be in English
 - Test files should have `package {name}_test`. Do not use same package name

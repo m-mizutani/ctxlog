@@ -10,10 +10,12 @@ import (
 )
 
 type ctxLoggerKey struct{}
+
 type ctxLogLevelKey struct{}
 
-var loggerKey = ctxLoggerKey{}
-var logLevelKey = ctxLogLevelKey{}
+var loggerKey = ctxLoggerKey{} //nolint:gochecknoglobals // Required for context key
+
+var logLevelKey = ctxLogLevelKey{} //nolint:gochecknoglobals // Required for context key
 
 // From extracts a logger from the context with optional configuration.
 // If no logger is found, returns slog.Default().
@@ -70,21 +72,25 @@ func WithLogLevel(ctx context.Context, level slog.Level) context.Context {
 	return context.WithValue(ctx, logLevelKey, level)
 }
 
-// randPool provides buffered cryptographically secure random numbers
+// randPool provides buffered cryptographically secure random numbers.
 type randPool struct {
 	mu     sync.Mutex
 	buffer []uint64
 	pos    int
 }
 
-const randPoolSize = 256 // Buffer size for random numbers
+const (
+	randPoolSize         = 256 // Buffer size for random numbers
+	ieee754MantissaBits  = 53  // IEEE 754 double precision mantissa bits
+	ieee754MantissaShift = 11  // Bit shift to extract mantissa (64 - 53)
+)
 
-var globalRandPool = &randPool{
+var globalRandPool = &randPool{ //nolint:gochecknoglobals // Required for performance buffering
 	buffer: make([]uint64, randPoolSize),
 	pos:    randPoolSize, // Start with empty buffer to trigger initial fill
 }
 
-// refillBuffer fills the buffer with new random numbers
+// refillBuffer fills the buffer with new random numbers.
 func (rp *randPool) refillBuffer() error {
 	buf := make([]byte, randPoolSize*8)
 	if _, err := rand.Read(buf); err != nil {
@@ -98,7 +104,7 @@ func (rp *randPool) refillBuffer() error {
 	return nil
 }
 
-// getUint64 returns a random uint64 from the buffer
+// getUint64 returns a random uint64 from the buffer.
 func (rp *randPool) getUint64() uint64 {
 	rp.mu.Lock()
 	defer rp.mu.Unlock()
@@ -115,14 +121,14 @@ func (rp *randPool) getUint64() uint64 {
 	return val
 }
 
-// fastRandFloat64 generates a fast pseudo-random float64 between 0 and 1
+// fastRandFloat64 generates a fast pseudo-random float64 between 0 and 1.
 func fastRandFloat64() float64 {
 	return mathrand.Float64() // #nosec G404 - intentionally using fast pseudo-random for performance
 }
 
-// cryptoRandFloat64 generates a cryptographically secure random float64 between 0 and 1
+// cryptoRandFloat64 generates a cryptographically secure random float64 between 0 and 1.
 func cryptoRandFloat64() float64 {
 	// Use bit shifting to avoid division by zero and improve performance
-	// Take the upper 53 bits for IEEE 754 double precision mantissa
-	return float64(globalRandPool.getUint64()>>11) * (1.0 / (1 << 53))
+	// Take the upper bits for IEEE 754 double precision mantissa
+	return float64(globalRandPool.getUint64()>>ieee754MantissaShift) * (1.0 / (1 << ieee754MantissaBits))
 }

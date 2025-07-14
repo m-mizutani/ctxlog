@@ -1,14 +1,13 @@
 package ctxlog_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/m-mizutani/ctxlog"
 )
 
 func TestCapture(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Create capture
 	captureCtx, capture := ctxlog.NewCapture(ctx)

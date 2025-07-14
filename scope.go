@@ -91,15 +91,15 @@ type scopeConfig struct {
 }
 
 var (
-	globalScopes  = make(map[string]*Scope)
-	scopesMu      sync.RWMutex
-	enabledScopes = make(map[string]*Scope)
-	enabledMu     sync.RWMutex
+	globalScopes  = make(map[string]*Scope) //nolint:gochecknoglobals // Required for scope registry
+	scopesMu      sync.RWMutex              //nolint:gochecknoglobals // Required for scope registry
+	enabledScopes = make(map[string]*Scope) //nolint:gochecknoglobals // Required for scope management
+	enabledMu     sync.RWMutex              //nolint:gochecknoglobals // Required for scope management
 )
 
 type ctxEnabledScopesKey struct{}
 
-var enabledScopesKey = ctxEnabledScopesKey{}
+var enabledScopesKey = ctxEnabledScopesKey{} //nolint:gochecknoglobals // Required for context key
 
 // EnabledBy creates a ScopeOption that enables scope activation via environment variables.
 //
@@ -340,7 +340,7 @@ func GetGlobalEnabledScopes() []*Scope {
 	enabledMu.RLock()
 	defer enabledMu.RUnlock()
 
-	var scopes []*Scope
+	scopes := make([]*Scope, 0, len(enabledScopes))
 	for _, scope := range enabledScopes {
 		scopes = append(scopes, scope)
 	}

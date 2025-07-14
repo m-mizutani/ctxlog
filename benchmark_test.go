@@ -1,14 +1,13 @@
 package ctxlog_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/m-mizutani/ctxlog"
 )
 
 func BenchmarkSampling(b *testing.B) {
-	ctx := context.Background()
+	ctx := b.Context()
 	scope := ctxlog.NewScope("bench", ctxlog.EnabledBy("BENCH"))
 	ctx = ctxlog.EnableScope(ctx, scope)
 
@@ -20,7 +19,7 @@ func BenchmarkSampling(b *testing.B) {
 }
 
 func BenchmarkSamplingParallel(b *testing.B) {
-	ctx := context.Background()
+	ctx := b.Context()
 	scope := ctxlog.NewScope("bench-parallel", ctxlog.EnabledBy("BENCH_PARALLEL"))
 	ctx = ctxlog.EnableScope(ctx, scope)
 
@@ -34,7 +33,7 @@ func BenchmarkSamplingParallel(b *testing.B) {
 }
 
 func BenchmarkWithoutSampling(b *testing.B) {
-	ctx := context.Background()
+	ctx := b.Context()
 	scope := ctxlog.NewScope("bench-no-sampling", ctxlog.EnabledBy("BENCH_NO_SAMPLING"))
 	ctx = ctxlog.EnableScope(ctx, scope)
 

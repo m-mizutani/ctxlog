@@ -16,14 +16,12 @@ linters:
     - bidichk
     - bodyclose
     - contextcheck
-    - cyclop
     - dupl
     - durationcheck
     - errname
     - errorlint
     - exhaustive
-    - exportloopref
-    - forbidigo
+    - copyloopvar
     - funlen
     - gci
     - ginkgolinter
@@ -35,7 +33,6 @@ linters:
     - goconst
     - gocritic
     - gocyclo
-    - godot
     - godox
     - gofmt
     - gofumpt
@@ -51,8 +48,6 @@ linters:
     - importas
     - inamedparam
     - interfacebloat
-    - intrange
-    - ireturn
     - lll
     - loggercheck
     - maintidx
@@ -64,12 +59,10 @@ linters:
     - nestif
     - nilerr
     - nilnil
-    - nlreturn
     - noctx
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
-    - paralleltest
     - prealloc
     - predeclared
     - promlinter
@@ -83,7 +76,7 @@ linters:
     - stylecheck
     - tagalign
     - tagliatelle
-    - tenv
+    - usetesting
     - testableexamples
     - testifylint
     - testpackage
@@ -94,8 +87,6 @@ linters:
     - usestdlibvars
     - wastedassign
     - whitespace
-    - wrapcheck
-    - wsl
     - zerologlint
 
 linters-settings:
@@ -166,22 +157,14 @@ issues:
         - funlen
         - gocognit
         - maintidx
-    
+
     # Exclude examples from some linters
     - path: examples/
       linters:
-        - gochecknoglobals
         - gochecknoinits
-        - forbidigo
         - mnd
         - gocritic
-    
+
     # Allow blank imports in main packages
     - path: main\.go
       text: "blank-imports"
-    
-    # Ignore intentional global variables for scope management
-    - path: scope\.go
-      text: "gochecknoglobals"
-      linters:
-        - gochecknoglobals

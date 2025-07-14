@@ -1,7 +1,6 @@
 package ctxlog_test
 
 import (
-	"context"
 	"log/slog"
 	"os"
 	"testing"
@@ -10,7 +9,7 @@ import (
 )
 
 func TestFrom(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Test with no logger in context
 	logger := ctxlog.From(ctx)
@@ -28,7 +27,7 @@ func TestFrom(t *testing.T) {
 }
 
 func TestWith(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	customLogger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 	newCtx := ctxlog.With(ctx, customLogger)
@@ -42,7 +41,7 @@ func TestWith(t *testing.T) {
 func TestMultipleOptions(t *testing.T) {
 	// Test combining multiple options
 	scope := ctxlog.NewScope("test-multi", ctxlog.EnabledBy("TEST_MULTI"))
-	ctx := context.Background()
+	ctx := t.Context()
 	ctx = ctxlog.EnableScope(ctx, scope)
 
 	// Should work with active scope and true condition
