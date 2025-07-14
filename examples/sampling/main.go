@@ -32,7 +32,7 @@ func main() {
 	// Example 3: Sampling with scopes
 	println("\n=== Example 3: Sampling with Scopes ===")
 	scope := ctxlog.NewScope("debug", ctxlog.EnabledBy("DEBUG_MODE"))
-	os.Setenv("DEBUG_MODE", "1")
+	_ = os.Setenv("DEBUG_MODE", "1")
 
 	for i := 0; i < 10; i++ {
 		logger := ctxlog.From(ctx, scope, ctxlog.WithSampling(0.4))

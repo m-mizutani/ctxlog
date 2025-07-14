@@ -49,7 +49,7 @@ func scopeCaptureExample() {
 	
 	// Create scope
 	scope := ctxlog.NewScope("test", ctxlog.EnabledBy("DEBUG_TEST"))
-	os.Setenv("DEBUG_TEST", "1")
+	_ = os.Setenv("DEBUG_TEST", "1")
 	
 	// Log with scope
 	logger := ctxlog.From(ctx, scope)

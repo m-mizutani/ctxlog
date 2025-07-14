@@ -21,7 +21,7 @@ func main() {
 
 	// Example 1: Child inherits parent activation
 	println("=== Example 1: Child Inherits Parent Activation ===")
-	os.Setenv("DEBUG_APP", "1")
+	_ = os.Setenv("DEBUG_APP", "1")
 
 	appLogger := ctxlog.From(ctx, appScope)
 	appLogger.Info("App scope message") // Active (DEBUG_APP is set)
@@ -37,8 +37,8 @@ func main() {
 
 	// Example 2: Child-specific activation
 	println("\n=== Example 2: Child-specific Activation ===")
-	os.Unsetenv("DEBUG_APP")
-	os.Setenv("DEBUG_USER", "1")
+	_ = os.Unsetenv("DEBUG_APP")
+	_ = os.Setenv("DEBUG_USER", "1")
 
 	appLogger = ctxlog.From(ctx, appScope)
 	appLogger.Info("App scope message") // Inactive (DEBUG_APP not set)
@@ -64,8 +64,8 @@ func main() {
 	// Set log level
 	ctx = ctxlog.WithLogLevel(ctx, slog.LevelError)
 
-	os.Unsetenv("DEBUG_MIXED")
-	os.Unsetenv("DEBUG_CHILD")
+	_ = os.Unsetenv("DEBUG_MIXED")
+	_ = os.Unsetenv("DEBUG_CHILD")
 
 	mixedLogger := ctxlog.From(ctx, mixedScope)
 	mixedLogger.Info("Mixed scope message") // Active (Error >= Warn)
@@ -75,7 +75,7 @@ func main() {
 
 	// Example 4: Dynamic activation with hierarchy
 	println("\n=== Example 4: Dynamic Activation with Hierarchy ===")
-	os.Unsetenv("DEBUG_USER")
+	_ = os.Unsetenv("DEBUG_USER")
 	ctx = ctxlog.WithLogLevel(ctx, slog.LevelDebug)
 
 	// Enable middle-level scope
@@ -102,7 +102,7 @@ func main() {
 	level5 := level4.NewChild("level5", ctxlog.EnabledBy("L5"))
 
 	// Enable level 3 - all children should be active
-	os.Setenv("L3", "1")
+	_ = os.Setenv("L3", "1")
 
 	for i, scope := range []*ctxlog.Scope{level1, level2, level3, level4, level5} {
 		logger := ctxlog.From(ctx, scope)

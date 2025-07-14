@@ -23,7 +23,7 @@ func main() {
 
 	// Example 1: Environment variable activation
 	println("=== Example 1: Environment Variable Activation ===")
-	os.Setenv("DEBUG_API", "1")
+	_ = os.Setenv("DEBUG_API", "1")
 	
 	apiLogger := ctxlog.From(ctx, apiScope)
 	apiLogger.Info("API debug message") // This will be logged
@@ -50,7 +50,7 @@ func main() {
 
 	// Example 4: Dynamic activation
 	println("\n=== Example 4: Dynamic Activation ===")
-	os.Unsetenv("DEBUG_API")
+	_ = os.Unsetenv("DEBUG_API")
 	ctx = ctxlog.WithLogLevel(ctx, slog.LevelDebug)
 	
 	// Enable scope dynamically
